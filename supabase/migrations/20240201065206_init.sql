@@ -15,7 +15,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA btc GRANT ALL ON TABLES TO 
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA btc GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA btc GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
 
-
+SET search_path TO btc;
 create type prev_out as (value int8, tx_index int8, n int8);
 create type input as (prev_out prev_out);
 create type outpoint as (n int8);
@@ -24,7 +24,7 @@ create type transaction as (tx_index int8, fee int8, inputs input[], out output[
 -- create type block as (tx transaction[]);
 
 
-CREATE OR REPLACE FUNCTION btc.get_utxo_from_addr(address text) RETURNS table(
+CREATE OR REPLACE FUNCTION get_utxo_from_addr(address text) RETURNS table(
   tx int8,
   index int8,
   value int8
@@ -67,22 +67,22 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TABLE btc.tinted (
+CREATE TABLE tinted (
   tx INT8 NOT NULL,
   index INT8 NOT NULL,
   value INT8 NOT NULL,
   tinted INT8 NOT NULL
 );
 
-CREATE INDEX tinted_tx_index ON btc.tinted(tx, index);
+CREATE INDEX tinted_tx_index ON tinted(tx, index);
 
-CREATE TABLE btc.block (
+CREATE TABLE block (
   height INT8 PRIMARY KEY,
   added int NOT NULL DEFAULT 0,
   removed int NOT NULL DEFAULT 0
 );
 
-CREATE OR REPLACE FUNCTION btc.process_block(height int)
+CREATE OR REPLACE FUNCTION process_block(height int)
 RETURNS VOID
 AS $$
 DECLARE
@@ -113,18 +113,18 @@ BEGIN
           (SELECT content::json->'tx' FROM extensions.http_get('https://blockchain.info/rawblock/' || height)) 
         ) as data
       ) AS tx
-      LEFT JOIN btc.tinted t ON t.tx=((inp).prev_out).tx_index AND t.index=((inp).prev_out).n
+      LEFT JOIN tinted t ON t.tx=((inp).prev_out).tx_index AND t.index=((inp).prev_out).n
       GROUP BY tx_index, out, t.tx, t.index
     ) AS inputs
     WHERE tinted > 0;
 
-  DELETE FROM btc.tinted t
+  DELETE FROM tinted t
     USING _tinted
     WHERE old_tx=t.tx AND old_index=t.index;
 
   GET DIAGNOSTICS removed = ROW_COUNT; 
 
-  INSERT INTO btc.tinted
+  INSERT INTO tinted
     select 
       _d.tx,
       (out).n,
@@ -134,7 +134,7 @@ BEGIN
 
   GET DIAGNOSTICS added = ROW_COUNT; 
 
-  INSERT INTO btc.block (height, added, removed) VALUES (height, added, removed);
+  INSERT INTO block (height, added, removed) VALUES (height, added, removed);
 
 END;
 $$ LANGUAGE plpgsql;
