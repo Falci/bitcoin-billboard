@@ -1,0 +1,13 @@
+{
+  "name": "bitcoin-monitor",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node .",
+    "postinstall": "npm rebuild --prefix ./node_modules/@bcoin-org/bcoin"
+  },
+  "dependencies": {
+    "@bcoin-org/bcoin": "https://github.com/bcoin-org/bcoin"
+  }
+}
