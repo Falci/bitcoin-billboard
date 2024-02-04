@@ -1,26 +1,9 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js'
-import * as Sentry from "https://deno.land/x/sentry/index.mjs";
-
-const dsn = Deno.env.get('SENTRY_DSN') ?? ''
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-const options = {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-    detectSessionInUrl: false,
-  },
-}
-
-Sentry.init({
-  dsn,
-  tracesSampleRate: 1.0,
-  profilesSampleRate: 1.0,
-});
+import Sentry from "../shared/sentry";
+import { createClient } from "../shared/supa";
 
 Deno.serve(async (req) => {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey, options)
+    const supabase = createClient()
     const { height } = await req.json()
 
     // async
