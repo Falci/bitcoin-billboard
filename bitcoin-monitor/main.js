@@ -29,7 +29,7 @@ process.on('SIGINT', async () => {
   await node.open();
   await node.connect();
 
-  console.log('webhook: %s', process.env.WEBHOOK);
+  console.log('Webhook: %s', process.env.WEBHOOK);
 
   // node.on('connect', (entry, block) => {
   //   console.log('%s (%d) added to chain.', entry.rhash(), entry.height);
