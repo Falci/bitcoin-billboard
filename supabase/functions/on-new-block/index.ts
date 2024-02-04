@@ -1,5 +1,5 @@
-import Sentry from "../shared/sentry";
-import { createClient } from "../shared/supa";
+import { createClient } from "../helpers/supa.ts";
+import Sentry from "../helpers/sentry.ts";
 
 Deno.serve(async (req) => {
   try {
@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     Sentry.captureException(err);
     return new Response(String(err?.message ?? err), { status: 500 })
   }
-})
+});
 
 /* To invoke locally:
 

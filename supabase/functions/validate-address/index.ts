@@ -1,7 +1,6 @@
 
-import Sentry from "../shared/sentry";
-import { validateBitcoinSignature } from "../shared/validate";
-
+import Sentry from "../helpers/sentry.ts";
+import { validateBitcoinSignature } from "../helpers/validate.ts";
 
 Deno.serve(async (req, res) => {
   try {
