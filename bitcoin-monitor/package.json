@@ -9,5 +9,8 @@
   },
   "dependencies": {
     "@bcoin-org/bcoin": "https://github.com/bcoin-org/bcoin"
+  },
+  "resolutions": {
+    "@bcoin-org/bcoin/**/nan": "git+https://github.com/braydonf/nan.git#semver:=2.18.0"
   }
 }
