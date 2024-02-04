@@ -1,3 +1,1 @@
-insert into btc.tinted values 
-(7354333204602, 5, 33293, 33293),
-(37754943475286, 1, 2194493, 2194493);
+insert into btc.block values (828948, 0, 0);
