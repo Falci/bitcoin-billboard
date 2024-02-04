@@ -3,7 +3,7 @@ on:
   push:
     branches: [master]
     paths:
-      - './bitcoin-monitor/.*'
+      - 'bitcoin-monitor/**'
 
 jobs:
   deploy:
