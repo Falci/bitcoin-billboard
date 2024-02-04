@@ -29,9 +29,9 @@ process.on('SIGINT', async () => {
   await node.open();
   await node.connect();
 
-  node.on('connect', (entry, block) => {
-    console.log('%s (%d) added to chain.', entry.rhash(), entry.height);
-  });
+  // node.on('connect', (entry, block) => {
+  //   console.log('%s (%d) added to chain.', entry.rhash(), entry.height);
+  // });
 
   await node.startSync();
 })().catch((err) => {
