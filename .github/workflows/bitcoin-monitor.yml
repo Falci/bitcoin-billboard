@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: './bitcoin-monitor/*'
-          target: '/home/falci/bitcoin-monitor'
+          target: '~/bitcoin-billboard'
 
       - name: Restart
         uses: appleboy/ssh-action@master
@@ -40,4 +40,4 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            service bitcoin-monitor restart
+            sudo service bitcoin-monitor restart
