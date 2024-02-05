@@ -53,7 +53,7 @@ RETURN QUERY
       from 
         (
           select tx_index, json_array_elements(array_to_json(out)) as out 
-          from json_populate_recordset(null::transaction, data->'txs') as txs
+          from json_populate_recordset(null::btc.transaction, data->'txs') as txs
         ) as output
     ) as outputs
   where addr = address
@@ -109,7 +109,7 @@ BEGIN
         t.index old_index, 
         out 
       FROM (
-        SELECT tx_index, unnest(inputs) as inp, out FROM json_populate_recordset(null::transaction,
+        SELECT tx_index, unnest(inputs) as inp, out FROM json_populate_recordset(null::btc.transaction,
           (SELECT content::json->'tx' FROM extensions.http_get('https://blockchain.info/rawblock/' || height)) 
         ) as data
       ) AS tx
@@ -138,3 +138,5 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
+
+SET search_path TO public;

@@ -7,7 +7,10 @@ const options = {
     autoRefreshToken: false,
     persistSession: false,
     detectSessionInUrl: false,
-  },
-}
+  }
+};
 
-export const createClient = () => create(supabaseUrl, supabaseKey, options);
+export const createClient = (authHeader?: string) => create(supabaseUrl, supabaseKey, {
+  ...options,
+  ...(authHeader ? { headers: { Authorization: authHeader } } : {})
+});
