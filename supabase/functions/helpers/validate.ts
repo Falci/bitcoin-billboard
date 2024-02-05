@@ -1,4 +1,4 @@
-import * as bitcoinMessage from 'npm:bitcoinjs-message';
+import * as bitcoinMessage from 'bitcoinjs-message';
 
 export async function validateBitcoinSignature(
   address: string,

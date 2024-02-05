@@ -1,6 +1,7 @@
 'use strict';
 
 const bcoin = require('@bcoin-org/bcoin');
+const axios = require('axios');
 
 const node = new bcoin.SPVNode({
   file: true,
@@ -29,11 +30,11 @@ process.on('SIGINT', async () => {
   await node.open();
   await node.connect();
 
-  console.log('Webhook: %s', process.env.WEBHOOK);
-
-  // node.on('connect', (entry, block) => {
-  //   console.log('%s (%d) added to chain.', entry.rhash(), entry.height);
-  // });
+  node.on('connect', (entry, block) => {
+    axios.post(process.env.WEBHOOK, {
+      height: entry.height,
+    });
+  });
 
   await node.startSync();
 })().catch((err) => {

@@ -1,5 +1,5 @@
 
-import * as Sentry from "https://deno.land/x/sentry/index.mjs";
+import * as Sentry from "sentry";
 
 Sentry.init({
   dsn: Deno.env.get('SENTRY_DSN') ?? '',
