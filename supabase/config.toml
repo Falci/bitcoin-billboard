@@ -5,6 +5,9 @@ project_id = "bitcoin-billboard"
 [functions.on-new-block]
 verify_jwt = false
 
+[functions.validate-address]
+verify_jwt = false
+
 [api]
 enabled = true
 # Port to use for the API URL.
