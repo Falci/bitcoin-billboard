@@ -8,6 +8,7 @@
     "postinstall": "npm rebuild --prefix ./node_modules/@bcoin-org/bcoin"
   },
   "dependencies": {
-    "@bcoin-org/bcoin": "https://github.com/bcoin-org/bcoin"
+    "@bcoin-org/bcoin": "https://github.com/bcoin-org/bcoin",
+    "axios": "^1.6.7"
   }
 }
