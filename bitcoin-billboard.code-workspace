@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "name": "client",
+      "path": "ui-client"
+    },
+    {
+      "name": "monitor",
+      "path": "bitcoin-monitor"
+    },
+    {
+      "name": "supabase",
+      "path": "supabase"
+    },
+    {
+      "name": "root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "ui-client": true,
+      "bitcoin-monitor": true,
+      "supabase": true
+    }
+  }
+}
