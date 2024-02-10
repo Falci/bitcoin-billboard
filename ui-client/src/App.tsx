@@ -1,4 +1,5 @@
 import { Footer } from './components/Footer';
+import { Messages } from './components/Messages';
 import { Navbar } from './components/Navbar';
 
 function App() {
@@ -7,7 +8,7 @@ function App() {
       <Navbar />
       <div className="flex flex-col justify-between items-center flex-1 p-6 max-w-5xl mx-auto w-full">
         <div>big hero section</div>
-        <div>latest messages</div>
+        <Messages />
         <div>form to add more</div>
       </div>
       <Footer />

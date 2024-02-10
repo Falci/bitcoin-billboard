@@ -5,6 +5,10 @@ on:
     paths:
       - 'bitcoin-monitor/**'
 
+concurrency:
+  group: 'bitcoin-monitor'
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
