@@ -1,6 +1,5 @@
 {
   "imports": {
-    "bitcoinjs-message": "npm:bitcoinjs-message",
     "sentry": "https://deno.land/x/sentry/index.mjs",
     "supabase": "https://esm.sh/@supabase/supabase-js"
   }

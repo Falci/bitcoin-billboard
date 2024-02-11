@@ -20,7 +20,7 @@ const node = new bcoin.SPVNode({
 
 // Temporary hack
 if (!node.config.bool('no-wallet') && !node.has('walletdb')) {
-  const plugin = require('../lib/wallet/plugin');
+  const plugin = require('@bcoin-org/bcoin/lib/wallet/plugin');
   node.use(plugin);
 }
 
