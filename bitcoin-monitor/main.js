@@ -18,6 +18,12 @@ const node = new bcoin.SPVNode({
   loader: require,
 });
 
+// Temporary hack
+if (!node.config.bool('no-wallet') && !node.has('walletdb')) {
+  const plugin = require('../lib/wallet/plugin');
+  node.use(plugin);
+}
+
 process.on('unhandledRejection', (err, promise) => {
   throw err;
 });
