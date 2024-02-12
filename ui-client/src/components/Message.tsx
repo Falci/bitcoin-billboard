@@ -33,7 +33,7 @@ export const Message = ({ author, link, message, amount }: MessageProps) => (
     <CardBody>
       <p>{message}</p>
     </CardBody>
-    <CardFooter className="gap-3">
+    <CardFooter className="gap-3 text-default-400">
       <Bitcoin amount={amount} />
     </CardFooter>
   </Card>

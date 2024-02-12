@@ -1,20 +1,15 @@
 import { Code } from '@nextui-org/react';
-import { useHashMessage } from '../hooks/useHashMessage';
+import { PropsWithChildren } from 'react';
 
-export interface HashMessageType {
-  author?: string;
-  link?: string;
-  message: string;
-}
-export const HashMessage = (props: HashMessageType) => {
-  const { data } = useHashMessage(props);
-
-  if (data) {
-    return (
-      <div>
-        <h2>Message to sign:</h2>
-        <Code size="lg">{data.msgToSign}</Code>
-      </div>
-    );
+export const HashMessage = ({ children }: PropsWithChildren) => {
+  if (!children) {
+    return null;
   }
+
+  return (
+    <div>
+      <h2>Message to sign:</h2>
+      <Code size="lg">{children}</Code>
+    </div>
+  );
 };

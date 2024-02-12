@@ -36,8 +36,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION hash_message(author text, link text, message text) RETURNS TEXT AS $$
-select encode(digest('{"author": "' || author || '", "link": "' || link || '", "message": "' || message || '"}', 'sha256'), 'hex');  
+CREATE OR REPLACE FUNCTION btc.hash_message(author text, link text, message text) RETURNS TEXT AS $$
+select CONCAT('btc.falci.me: ', encode(extensions.digest('{"author": "' || author || '", "link": "' || link || '", "message": "' || message || '"}', 'sha256'::text), 'hex'));  
 $$ LANGUAGE sql;
 
 SET search_path TO public;

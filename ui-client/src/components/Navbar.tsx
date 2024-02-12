@@ -8,7 +8,7 @@ import {
 } from '@nextui-org/react';
 
 export const Navbar = () => (
-  <Nav isBordered>
+  <Nav isBordered className="bg-transparent">
     <NavbarBrand>
       <p className="font-bold text-inherit">ACME</p>
     </NavbarBrand>

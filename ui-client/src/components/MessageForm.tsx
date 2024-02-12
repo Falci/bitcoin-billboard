@@ -7,14 +7,14 @@ export interface FormProps {
   onSubmit: (data: FormType) => void;
   readOnly: boolean;
 }
-export const Form = ({ onSubmit, readOnly }: FormProps) => {
+export const MessageForm = ({ onSubmit, readOnly }: FormProps) => {
   const { handleSubmit, register, watch } = useFormContext<FormType>();
   const values = watch();
 
   return (
     <div className="flex gap-4 flex-col md:flex-row">
       <div className="flex-1">
-        <h2 className="mb-4 text-2xl">Form</h2>
+        <h2 className="mb-4 text-2xl">Editor</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex gap-4 flex-col">
           <div className="flex gap-4">
             <Input
