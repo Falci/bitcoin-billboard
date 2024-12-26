@@ -43,8 +43,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION btc.hash_message(author text, link text, message text) RETURNS TEXT AS $$
-select CONCAT('btc.falci.me: ', encode(extensions.digest('{"author": "' || author || '", "link": "' || link || '", "message": "' || message || '"}', 'sha256'::text), 'hex'));  
-$$ LANGUAGE sql;
+CREATE OR REPLACE FUNCTION btc.hash_message(author text, message text) RETURNS TEXT AS $$
+DECLARE 
+  settings jsonb;
+BEGIN
+  SELECT value INTO settings FROM public.settings WHERE key = 'public_site';
+
+  RETURN 
+    CONCAT(settings->>'domain', ': ', encode(extensions.digest('{"author": "' || author || '", "message": "' || message || '"}', 'sha256'::text), 'hex'));  
+
+END;
+$$ LANGUAGE plpgsql;
 
 SET search_path TO public;
