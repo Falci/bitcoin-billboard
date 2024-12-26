@@ -12,16 +12,15 @@ export const getMessages = () =>
 export const hashMessage = ({
   message,
   author = '',
-  link = '',
 }: BoardMessage) =>
   supabase
     .schema('btc')
     .rpc('hash_message', {
       message,
       author,
-      link,
+      link: '',
     })
-    .then(({ data }) => data);
+    .then(({ data }) => data || '');
 
 export const getAddrBalance = ({
   address,

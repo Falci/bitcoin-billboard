@@ -3,6 +3,7 @@ import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { getAddrBalance } from '../database';
 import { FormType } from '../types';
 import { AddressesList } from './AddressesList';
+import { useState } from 'react';
 
 interface AddressFormType {
   address: string;
@@ -13,11 +14,13 @@ export interface AddressFormProps {
   hash: string;
 }
 export const AddressForm = ({ hash }: AddressFormProps) => {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     formState: { errors },
     handleSubmit,
     setError,
+    reset,
   } = useForm<AddressFormType>();
   const { control } = useFormContext<FormType>();
   const { append, fields } = useFieldArray({
@@ -26,7 +29,14 @@ export const AddressForm = ({ hash }: AddressFormProps) => {
   });
 
   const onSubmit = (data: AddressFormType) => {
+    if (fields.some((item) => item.address === data.address)) {
+      setError('address', { message: 'Address already added' });
+      return;
+    }
+
+    setLoading(true);
     getAddrBalance({ ...data, message: hash }).then((res) => {
+      setLoading(false);
       if (res.error) {
         setError('signature', {
           message: res.error.message,
@@ -46,6 +56,7 @@ export const AddressForm = ({ hash }: AddressFormProps) => {
         value,
         tinted,
       });
+      reset();
     });
   };
 
@@ -58,6 +69,8 @@ export const AddressForm = ({ hash }: AddressFormProps) => {
         <Input
           size="sm"
           label="Address"
+          isInvalid={!!errors?.address}
+          errorMessage={errors?.address?.message}
           {...register('address', { required: 'Required' })}
         />
         <Input
@@ -67,8 +80,8 @@ export const AddressForm = ({ hash }: AddressFormProps) => {
           errorMessage={errors?.signature?.message}
           {...register('signature', { required: 'Required' })}
         />
-        <Button type="submit" size="lg" color="secondary">
-          Add
+        <Button type="submit" size="lg" color="secondary" isLoading={loading}>
+          {!loading && 'Add'}
         </Button>
       </div>
       <AddressesList items={fields} />

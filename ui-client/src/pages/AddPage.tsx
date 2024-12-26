@@ -1,11 +1,12 @@
 import { Button } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { AddressForm } from '../components/AddressForm';
 import { HashMessage } from '../components/HashMessage';
 import { MessageForm } from '../components/MessageForm';
 import { hashMessage } from '../database';
 import { FormType } from '../types';
+import { MIN_SATS } from '@/constants';
 
 type State = 'form' | 'coins';
 
@@ -13,7 +14,7 @@ export const AddPage = () => {
   const form = useForm<FormType>({});
   const values = form.watch();
   const [state, setState] = useState<State>('form');
-  const [hash, setHash] = useState('');
+  const [hash, setHash] = useState<string>('');
 
   useEffect(() => {
     if (state !== 'form') {
@@ -22,6 +23,8 @@ export const AddPage = () => {
       setHash('');
     }
   }, [values, state]);
+
+  const total = useMemo(() => values.items?.reduce((acc, { value, tinted }) => acc + value - tinted, 0) || 0, [values]);
 
   const onSubmit = (data: FormType) => {
     console.log(data);
@@ -33,15 +36,21 @@ export const AddPage = () => {
         <MessageForm onSubmit={onSubmit} readOnly={state !== 'form'} />
 
         {state === 'form' ? (
-          <Button onClick={() => setState('coins')}>Continue</Button>
+          <div><Button onPress={() => setState('coins')} color="primary">Continue</Button></div>
         ) : (
-          <HashMessage>{hash}</HashMessage>
+          <HashMessage hash={hash}/>
         )}
 
-        {state !== 'form' && (
+        {state === 'coins' && (
           <div>
             <h2 className="mb-4 text-2xl">Addresses</h2>
-            <AddressForm hash={hash} />
+            <AddressForm hash={hash!} />
+          </div>
+        )}
+
+        {total >= MIN_SATS && (
+          <div className='text-center'>
+            <Button onPress={() => onSubmit(form.getValues())} color="primary" size="lg">Post message</Button>
           </div>
         )}
       </div>

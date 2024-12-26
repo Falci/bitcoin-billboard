@@ -1,15 +1,25 @@
 import { Code } from '@nextui-org/react';
-import { PropsWithChildren } from 'react';
+import { BiCopy } from 'react-icons/bi';
+import {useCopyToClipboard} from 'react-use';
 
-export const HashMessage = ({ children }: PropsWithChildren) => {
-  if (!children) {
+export interface HashMessageProps {
+  hash?: string;
+}
+export const HashMessage = ({ hash }: HashMessageProps) => {
+  const [, copyToClipboard] = useCopyToClipboard();
+
+  if (!hash) {
     return null;
   }
 
   return (
     <div>
       <h2>Message to sign:</h2>
-      <Code size="lg">{children}</Code>
+
+      <div className='flex items-center gap-2'>
+        <Code size="lg">{hash}</Code>
+        <BiCopy className='w-5 h-5 hover:text-gray-600 transition-colors duration-250 cursor-pointer ring-neutral-200' onClick={() => copyToClipboard(hash)} />
+      </div>
     </div>
   );
 };

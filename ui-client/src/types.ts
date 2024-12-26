@@ -1,6 +1,5 @@
 export interface BoardMessage {
   author?: string;
-  link?: string;
   message: string;
 }
 

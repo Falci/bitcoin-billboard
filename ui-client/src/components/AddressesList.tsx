@@ -1,6 +1,8 @@
+import cn from 'classnames';
 import { Link } from '@nextui-org/react';
 import { FormType } from '../types';
 import { Bitcoin } from './Bitcoin';
+import { MIN_SATS } from '@/constants';
 
 export interface AddressesListProps {
   items?: (FormType['items'][number] & { id: string })[];
@@ -23,17 +25,22 @@ export const AddressesList = ({ items = [] }: AddressesListProps) => {
             </Link>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-success">
+            <div className="text-success w-32 whitespace-nowrap text-right">
               + <Bitcoin amount={item.value} />
             </div>
-            <div className="text-danger">
+
+            <div className={cn("text-danger", {
+              'hidden': item.tinted === 0
+            })}>
               - <Bitcoin amount={item.tinted} />
             </div>
           </div>
         </div>
       ))}
 
-      <div className="flex justify-end gap-4 border-t py-2 my-2 border-default">
+      <div className={cn("flex justify-end gap-4 border-t py-2 my-2 border-default", {
+        'hidden': tinted === 0
+      })}>
         <div>
           <div className="text-right">Subtotal:</div>
           <div className="text-right">Tinted:</div>
@@ -47,13 +54,21 @@ export const AddressesList = ({ items = [] }: AddressesListProps) => {
           </div>
         </div>
       </div>
-      <div className="text-right border-t py-2 my-2 border-default">
+      <div className={cn("text-right border-t py-2 my-2 border-default", {
+        'hidden': total === 0
+      })}>
         <div className="text-bold text-xl">
           Total:{' '}
-          <span className="text-success">
+          <span className={cn("transition-all duration-150", {
+            'text-success': total >= MIN_SATS,
+            'text-warning': total < MIN_SATS,
+          })}>
             <Bitcoin amount={total} />
           </span>
         </div>
+        <div className={cn("text-xs text-gray-500", {
+          'hidden': total >= MIN_SATS
+        })}>Minimum <Bitcoin amount={MIN_SATS} /></div>
       </div>
     </div>
   );
