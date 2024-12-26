@@ -27,43 +27,43 @@ create type transaction as (tx_index int8, fee int8, inputs input[], out output[
 CREATE OR REPLACE FUNCTION get_utxo_from_addr(address text) RETURNS table(
   tx int8,
   index int8,
-  value int8
-) AS $$
-DECLARE 
-  data json;
-  row_count int;
-BEGIN
-  set statement_timeout to 60000;
+  value int8) AS 
+$$
+  DECLARE 
+    data json;
+    row_count int;
+  BEGIN
+    set statement_timeout to 60000;
 
-  select 
-    content::json
-  into data
-  from extensions.http_get('https://blockchain.info/rawaddr/' || address);
-  
-RETURN QUERY
-  select outputs.tx, outputs.index, outputs.value
-  from 
-    (
-      select 
-        tx_index as "tx", 
-        (out->>'n')::int8 index,
-        out->'spending_outpoints' spending_outpoints,
-        out->>'addr' addr,
-        (out->>'value')::int8 value
-      from 
-        (
-          select tx_index, json_array_elements(array_to_json(out)) as out 
-          from json_populate_recordset(null::btc.transaction, data->'txs') as txs
-        ) as output
-    ) as outputs
-  where addr = address
-  and json_array_length(spending_outpoints) = 0;
+    select 
+      content::json
+    into data
+    from extensions.http_get('https://blockchain.info/rawaddr/' || address);
+    
+  RETURN QUERY
+    select outputs.tx, outputs.index, outputs.value
+    from 
+      (
+        select 
+          tx_index as "tx", 
+          (out->>'n')::int8 index,
+          out->'spending_outpoints' spending_outpoints,
+          out->>'addr' addr,
+          (out->>'value')::int8 value
+        from 
+          (
+            select tx_index, json_array_elements(array_to_json(out)) as out 
+            from json_populate_recordset(null::btc.transaction, data->'txs') as txs
+          ) as output
+      ) as outputs
+    where addr = address
+    and json_array_length(spending_outpoints) = 0;
 
-  GET DIAGNOSTICS row_count = ROW_COUNT;
-  IF FOUND AND (data->>'n_unredeemed')::int > row_count THEN
-    RAISE EXCEPTION 'Too much transactions for this address. Found % of %', row_count, data->>'n_unredeemed';
-  END IF;
-END;
+    GET DIAGNOSTICS row_count = ROW_COUNT;
+    IF FOUND AND (data->>'n_unredeemed')::int > row_count THEN
+      RAISE EXCEPTION 'Too much transactions for this address. Found % of %', row_count, data->>'n_unredeemed';
+    END IF;
+  END;
 $$ LANGUAGE plpgsql;
 
 
@@ -82,61 +82,60 @@ CREATE TABLE block (
   removed int NOT NULL DEFAULT 0
 );
 
-CREATE OR REPLACE FUNCTION process_block(height int)
-RETURNS VOID
-AS $$
-DECLARE
-  added int;
-  removed int;
-BEGIN
-  SET statement_timeout TO 60000;
+CREATE OR REPLACE FUNCTION process_block(height int) RETURNS VOID AS 
+$$
+  DECLARE
+    added int;
+    removed int;
+  BEGIN
+    SET statement_timeout TO 60000;
 
-  -- TODO: check if block exists
+    -- TODO: check if block exists
 
-  CREATE TEMP TABLE _tinted AS
-    SELECT 
-      tx,
-      tinted / inputs as tinted_input_ratio,
-      unnest(out) out,
-      old_tx,
-      old_index
-    FROM (
+    CREATE TEMP TABLE _tinted AS
       SELECT 
-        tx.tx_index as tx, 
-        sum(((inp).prev_out).value) inputs, 
-        sum(coalesce(t.tinted, 0)) tinted,
-        t.tx old_tx,
-        t.index old_index, 
-        out 
+        tx,
+        tinted / inputs as tinted_input_ratio,
+        unnest(out) out,
+        old_tx,
+        old_index
       FROM (
-        SELECT tx_index, unnest(inputs) as inp, out FROM json_populate_recordset(null::btc.transaction,
-          (SELECT content::json->'tx' FROM extensions.http_get('https://blockchain.info/rawblock/' || height)) 
-        ) as data
-      ) AS tx
-      LEFT JOIN tinted t ON t.tx=((inp).prev_out).tx_index AND t.index=((inp).prev_out).n
-      GROUP BY tx_index, out, t.tx, t.index
-    ) AS inputs
-    WHERE tinted > 0;
+        SELECT 
+          tx.tx_index as tx, 
+          sum(((inp).prev_out).value) inputs, 
+          sum(coalesce(t.tinted, 0)) tinted,
+          t.tx old_tx,
+          t.index old_index, 
+          out 
+        FROM (
+          SELECT tx_index, unnest(inputs) as inp, out FROM json_populate_recordset(null::btc.transaction,
+            (SELECT content::json->'tx' FROM extensions.http_get('https://blockchain.info/rawblock/' || height)) 
+          ) as data
+        ) AS tx
+        LEFT JOIN tinted t ON t.tx=((inp).prev_out).tx_index AND t.index=((inp).prev_out).n
+        GROUP BY tx_index, out, t.tx, t.index
+      ) AS inputs
+      WHERE tinted > 0;
 
-  DELETE FROM tinted t
-    USING _tinted
-    WHERE old_tx=t.tx AND old_index=t.index;
+    DELETE FROM tinted t
+      USING _tinted
+      WHERE old_tx=t.tx AND old_index=t.index;
 
-  GET DIAGNOSTICS removed = ROW_COUNT; 
+    GET DIAGNOSTICS removed = ROW_COUNT; 
 
-  INSERT INTO tinted
-    select 
-      _d.tx,
-      (out).n,
-      (out).value,
-      ROUND((out).value * tinted_input_ratio) tinted
-    from _tinted as _d;
+    INSERT INTO tinted
+      select 
+        _d.tx,
+        (out).n,
+        (out).value,
+        ROUND((out).value * tinted_input_ratio) tinted
+      from _tinted as _d;
 
-  GET DIAGNOSTICS added = ROW_COUNT; 
+    GET DIAGNOSTICS added = ROW_COUNT; 
 
-  INSERT INTO block (height, added, removed) VALUES (height, added, removed);
+    INSERT INTO block (height, added, removed) VALUES (height, added, removed);
 
-END;
+  END;
 $$ LANGUAGE plpgsql;
 
 SET search_path TO public;

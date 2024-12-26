@@ -6,15 +6,22 @@ $$
 DECLARE
   data jsonb;
 BEGIN
+   SELECT value INTO data FROM public.settings WHERE key = 'edge_functions';
+
    SELECT content::jsonb
    INTO data
-   FROM extensions.http_post('http://spv.btc.falci.me/verify', '{"address": "' || address || '", "message": "' || message || '", "signature": "' || signature || '"}', 'application/json');
+   FROM extensions.http((
+      'POST',
+      data->>'url' || '/functions/v1/verify',
+      ARRAY[extensions.http_header('authorization', concat('Bearer ', data->>'key'))],
+      'application/json',
+      '{"address": "' || address || '", "message": "' || message || '", "signature": "' || signature || '"}'
+   )::extensions.http_request);
 
-   RETURN coalesce((data->>'result'), 'false')::boolean;
+   RETURN coalesce((data->>'isValid'), 'false')::boolean;
 END
 $$ LANGUAGE plpgsql STABLE STRICT;
 
-DROP FUNCTION get_addr_balance(address text);
 CREATE OR REPLACE FUNCTION get_addr_balance(address text, message text, signature text) RETURNS table(
   tx int8,
   index int8,
