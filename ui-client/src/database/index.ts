@@ -9,17 +9,10 @@ const supabase = createClient<Database>(
 export const getMessages = () =>
   supabase.schema('btc').from('messages').select();
 
-export const hashMessage = ({
-  message,
-  author = '',
-}: BoardMessage) =>
+export const hashMessage = ({ message, author = '' }: BoardMessage) =>
   supabase
     .schema('btc')
-    .rpc('hash_message', {
-      message,
-      author,
-      link: '',
-    })
+    .rpc('hash_message', { message, author })
     .then(({ data }) => data || '');
 
 export const getAddrBalance = ({

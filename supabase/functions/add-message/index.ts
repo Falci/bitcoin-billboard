@@ -5,8 +5,8 @@ import { satsToString } from '../helpers/sats.ts';
 
 Deno.serve(async (req) => {
   try {
-    const { author, link, message, addresses } = await req.json();
-    const hash = hashMessage({ author, link, message });
+    const { author, message, addresses } = await req.json();
+    const hash = hashMessage({ author, message });
     const msgToSign = [Deno.env.get('HASH_PREFIX'), hash].join('');
 
     const client = createClient(req);

@@ -6,16 +6,14 @@ import {
   CardFooter,
   CardHeader,
 } from '@nextui-org/react';
-import { ComponentPropsWithoutRef } from 'react';
 import { Bitcoin } from './Bitcoin';
 
 export interface MessageProps {
   author?: string;
-  link?: string;
   message: string;
   amount: number;
 }
-export const Message = ({ author, link, message, amount }: MessageProps) => (
+export const Message = ({ author, message, amount }: MessageProps) => (
   <Card>
     <CardHeader className="justify-between">
       <div className="flex gap-5">
@@ -24,9 +22,6 @@ export const Message = ({ author, link, message, amount }: MessageProps) => (
           <h4 className="text-small font-semibold leading-none text-default-600">
             {author || 'Anonymous'}
           </h4>
-          <h5 className="text-small tracking-tight text-default-400">
-            <Link href={link} />
-          </h5>
         </div>
       </div>
     </CardHeader>
@@ -38,27 +33,3 @@ export const Message = ({ author, link, message, amount }: MessageProps) => (
     </CardFooter>
   </Card>
 );
-
-const Link = ({ href, children }: ComponentPropsWithoutRef<'a'>) => {
-  const text =
-    children ||
-    (() => {
-      try {
-        const url = new URL(href!);
-        return url.hostname || url.pathname;
-      } catch (e) {
-        return href;
-      }
-    })();
-
-  return (
-    <a
-      href={href}
-      className="underline"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {text}
-    </a>
-  );
-};

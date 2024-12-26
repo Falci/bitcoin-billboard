@@ -6,7 +6,6 @@ create type message_coin as (addr TEXT, utxo coin_utxo[], signature TEXT);
 CREATE TABLE IF NOT EXISTS messages (
     id CHAR(64) PRIMARY KEY,
     author TEXT,
-    link TEXT,
     message TEXT NOT NULL,
     amount INT8 NOT NULL,
     coins message_coin[],
