@@ -24,7 +24,15 @@ export const AddPage = () => {
     }
   }, [values, state]);
 
-  const total = useMemo(() => values.items?.reduce((acc, { value, tinted }) => acc + value - tinted, 0) || 0, [values]);
+  const disableContinue = !values.message?.trim();
+  const total = useMemo(
+    () =>
+      values.items?.reduce(
+        (acc, { value, tinted }) => acc + value - tinted,
+        0
+      ) || 0,
+    [values]
+  );
 
   const onSubmit = (data: FormType) => {
     console.log(data);
@@ -36,9 +44,19 @@ export const AddPage = () => {
         <MessageForm onSubmit={onSubmit} readOnly={state !== 'form'} />
 
         {state === 'form' ? (
-          <div><Button onPress={() => setState('coins')} color="primary">Continue</Button></div>
+          <div>
+            <Button
+              onPress={() => !disableContinue && setState('coins')}
+              disabled={disableContinue}
+              color={disableContinue ? 'default' : 'primary'}
+              disableRipple={disableContinue}
+              disableAnimation={disableContinue}
+            >
+              Continue
+            </Button>
+          </div>
         ) : (
-          <HashMessage hash={hash}/>
+          <HashMessage hash={hash} />
         )}
 
         {state === 'coins' && (
@@ -49,8 +67,14 @@ export const AddPage = () => {
         )}
 
         {total >= MIN_SATS && (
-          <div className='text-center'>
-            <Button onPress={() => onSubmit(form.getValues())} color="primary" size="lg">Post message</Button>
+          <div className="text-center">
+            <Button
+              onPress={() => onSubmit(form.getValues())}
+              color="primary"
+              size="lg"
+            >
+              Post message
+            </Button>
           </div>
         )}
       </div>

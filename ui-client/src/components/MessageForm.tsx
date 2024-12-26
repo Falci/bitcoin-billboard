@@ -37,7 +37,7 @@ export const MessageForm = ({ onSubmit, readOnly }: FormProps) => {
           />
         </form>
       </div>
-      {values.message && (
+      {values.message?.trim() && (
         <div className="flex-1">
           <h2 className="mb-4 text-2xl">Preview</h2>
           <Message {...values} amount={total > MIN_SATS ? total : MIN_SATS} />
