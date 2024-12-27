@@ -26,6 +26,8 @@ jobs:
           version: latest
       - uses: oven-sh/setup-bun@v1
       - run: |
+          supabase init
+          supabase db start
           cd ui-client
           bun install
           bun run gen:schema
