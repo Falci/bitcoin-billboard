@@ -25,6 +25,7 @@ jobs:
       - run: |
           cd ui-client
           bun install
+          bun run gen:schema
           bun run build
 
       - name: Deploy

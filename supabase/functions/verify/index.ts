@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     if (isValid) {
       format = 'bip322';
     } else {
-      const res = await fetch(`https://spv.btc.falci.me`, {
+      const res = await fetch(`https://spv.btc.wholecoiners.club`, {
         headers: {
           'Content-Type': 'application/json',
           'X-APIKEY': '7d0d2962-fc02-4253-8e79-f1676726983f',
