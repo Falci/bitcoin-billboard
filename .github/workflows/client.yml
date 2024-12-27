@@ -26,8 +26,14 @@ jobs:
           version: latest
       - uses: oven-sh/setup-bun@v1
       - run: |
-          supabase init
+          supabase link --project-ref $SUPABASE_PROJECT_ID
           supabase db start
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+      - run: |
           cd ui-client
           bun install
           bun run gen:schema
