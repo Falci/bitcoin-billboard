@@ -36,9 +36,7 @@ BEGIN
     RAISE EXCEPTION 'Invalid signature';
   end if;
 
-  RETURN QUERY
-    select utxo.*, coalesce(t.tinted, 0) from btc.get_utxo_from_addr(address) utxo
-    left join btc.tinted t on t.tx=utxo.tx and t.index=utxo.index;
+  RETURN QUERY select btc.get_addr_balance(address);
   
 END;
 $$ LANGUAGE plpgsql;
